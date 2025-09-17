@@ -4,191 +4,197 @@
 
 @section('content')
 
- <!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel — Tabla • Gráficas • Formulario • Registrar</title>
+  <title>Panel IoT — Monitoreo & Registros</title>
   <style>
+    :root {
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --primary:#2563eb;
+      --primary-hover:#1d4ed8;
+    }
     body {
       font-family: Arial, sans-serif;
+      background-color: var(--bg);
       margin: 0;
-      background: #f4f6f9;
-      color: #333;
+      padding: 0;
     }
-    nav {
+    header {
+      background-color: var(--card);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 1rem 2rem;
       display: flex;
-      background: #2c3e50;
-      padding: 10px;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
     }
-    nav button {
-      background: #34495e;
-      border: none;
+    header h1 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    nav a {
+      margin-left: 1rem;
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: var(--primary);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .panel {
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: .5rem;
+    }
+    .panel p {
+      margin-top: 0;
+      color: var(--muted);
+    }
+    .btns {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      background: var(--primary);
       color: #fff;
-      padding: 10px 20px;
-      margin: 0 5px;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background 0.3s;
-    }
-    nav button:hover {
-      background: #1abc9c;
-    }
-    section {
-      display: none;
-      padding: 20px;
-    }
-    section.active {
-      display: block;
-    }
-    form input, form button {
-      display: block;
-      margin: 10px 0;
-      padding: 8px;
-    }
-    canvas {
-      max-width: 600px;
-      margin: 20px auto;
-      display: block;
-    }
-    #limpiarBtn {
-      background: #e74c3c;
-      color: white;
       border: none;
-      padding: 10px 15px;
+      padding: .7rem 1.5rem;
       border-radius: 5px;
       cursor: pointer;
-      margin-top: 15px;
+      text-decoration: none;
+      font-weight: bold;
+      display:inline-block;
     }
-    #limpiarBtn:hover {
-      background: #c0392b;
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: .2rem;
+    }
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+      gap: 1rem;
+    }
+    .module {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .module h4 {
+      margin-top: 0;
+      margin-bottom: .5rem;
+    }
+    .muted {
+      color: var(--muted);
+    }
+    .module .btns {
+      margin-top:10px;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
+<header>
+  <h1>🌸 IOT</h1>
   <nav>
-    <button onclick="mostrar('tabla')">Tabla</button>
-    <button onclick="mostrar('graficas')">Gráficas</button>
-    <button onclick="mostrar('formulario')">Formulario</button>
-    <button onclick="mostrar('registrar')">Registrar Datos</button>
+    <a href="index.html">Inicio</a>
+    <a href="tabla.html">Tabla</a>
+    <a href="formulario.html">Formulario</a>
   </nav>
+</header>
 
-  <main>
-    <section id="tabla">
-      <h2>Tabla de Datos</h2>
-      <table border="1" cellpadding="8">
-        <thead>
-          <tr><th>Categoría</th><th>Valor</th></tr>
-        </thead>
-        <tbody id="tabla-body"></tbody>
-      </table>
-      <button id="limpiarBtn" onclick="limpiarDatos()">🗑 Limpiar Datos</button>
-    </section>
+<div class="container">
+  <div class="panel">
+    <small>ESP32 - LTE (SIM7670G) · PostgreSQL</small>
+    <h2>Panel IoT — Monitoreo & Registros</h2>
+    <p>Captura datos, visualízalos en tabla y prepara el entorno para conectar SENSORES de dispositivos IoT.</p>
+    <div class="btns">
+      <a class="btn" href="formulario.html">+ Registrar dato</a>
+      <a class="btn" href="tabla.html">Ver tabla</a>
+    </div>
+  </div>
 
-    <section id="graficas">
-      <h2>Gráficas</h2>
-      <canvas id="graficoBarras"></canvas>
-      <canvas id="graficoLineas"></canvas>
-      <canvas id="graficoPastel"></canvas>
-    </section>
+  <div class="cards">
+    <div class="card" onclick="location.href='sensores.html'">
+      <h3>Sensores en línea</h3>
+      <p><strong>3</strong><br><span class="muted">Demo (mock) • Ajustable</span></p>
+    </div>
+    <div class="card" onclick="location.href='sincronizacion.html'">
+      <h3>Última sincronización</h3>
+      <p><strong>hace 2 min</strong><br><span class="muted">Simulada para la demo</span></p>
+    </div>
+    <div class="card" onclick="location.href='basedatos.html'">
+      <h3>Base de datos</h3>
+      <p><strong>MYSQL</strong><br><span class="muted">Conectado vía MYSQL</span></p>
+    </div>
+  </div>
 
-    <section id="formulario">
-      <h2>Formulario</h2>
-      <form id="dataForm">
-        <input type="text" id="categoria" placeholder="Categoría" required>
-        <input type="number" id="valor" placeholder="Valor" required>
-        <button type="submit">Agregar</button>
-      </form>
-    </section>
-
-    <section id="registrar">
-      <h2>Registrar Datos Guardados</h2>
-      <p>Los datos ya se guardan automáticamente en <strong>localStorage</strong>.</p>
-    </section>
-  </main>
-
-<script>
-  let datos = JSON.parse(localStorage.getItem("datos")) || [];
-
-  const tablaBody = document.getElementById("tabla-body");
-  const form = document.getElementById("dataForm");
-
-  const ctxBarras = document.getElementById("graficoBarras").getContext("2d");
-  const ctxLineas = document.getElementById("graficoLineas").getContext("2d");
-  const ctxPastel = document.getElementById("graficoPastel").getContext("2d");
-
-  let chartBarras, chartLineas, chartPastel;
-
-  function mostrar(id) {
-    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    if(id === "graficas") actualizarGraficas();
-    if(id === "tabla") actualizarTabla();
-  }
-
-  function actualizarTabla() {
-    tablaBody.innerHTML = "";
-    datos.forEach(d => {
-      const fila = `<tr><td>${d.categoria}</td><td>${d.valor}</td></tr>`;
-      tablaBody.innerHTML += fila;
-    });
-  }
-
-  function actualizarGraficas() {
-    const labels = datos.map(d => d.categoria);
-    const valores = datos.map(d => d.valor);
-
-    if(chartBarras) chartBarras.destroy();
-    if(chartLineas) chartLineas.destroy();
-    if(chartPastel) chartPastel.destroy();
-
-    chartBarras = new Chart(ctxBarras, {
-      type: 'bar',
-      data: { labels, datasets: [{ label: 'Valores', data: valores, backgroundColor: 'rgba(52, 152, 219,0.7)' }] }
-    });
-
-    chartLineas = new Chart(ctxLineas, {
-      type: 'line',
-      data: { labels, datasets: [{ label: 'Tendencia', data: valores, borderColor: 'rgba(231, 76, 60,1)', fill: false }] }
-    });
-
-    chartPastel = new Chart(ctxPastel, {
-      type: 'pie',
-      data: { labels, datasets: [{ data: valores, backgroundColor: ['#1abc9c','#e74c3c','#9b59b6','#f1c40f','#3498db'] }] }
-    });
-  }
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const categoria = document.getElementById("categoria").value;
-    const valor = parseFloat(document.getElementById("valor").value);
-
-    datos.push({ categoria, valor });
-    localStorage.setItem("datos", JSON.stringify(datos));
-
-    form.reset();
-    actualizarTabla();
-    actualizarGraficas();
-  });
-
-  function limpiarDatos() {
-    if(confirm("¿Seguro que quieres borrar todos los datos?")) {
-      datos = [];
-      localStorage.removeItem("datos");
-      actualizarTabla();
-      actualizarGraficas();
-    }
-  }
-
-  mostrar("tabla");
-  actualizarTabla();
-</script>
+  <h3>Módulos</h3>
+  <div class="modules">
+    <div class="module">
+      <h4>Gestión de registros</h4>
+      <p class="muted">Crea y lista registros (base para actores, pacientes o dispositivos).</p>
+      <div class="btns">
+        <a class="btn" href="formulario.html">Nuevo</a>
+        <a class="btn" href="tabla.html">Ver</a>
+      </div>
+    </div>
+    <div class="module">
+      <h4>Dispositivos IoT</h4>
+      <p class="muted">Registro de dispositivos ESP32/SIM7670G, asignación y estado (pendiente).</p>
+      <div class="btns">
+        <button class="btn" onclick="alert('Funcionalidad próximamente');">Próximamente</button>
+      </div>
+    </div>
+    <div class="module">
+      <h4>Panel tiempo real</h4>
+      <p class="muted">Gráficas de telemetría (SpO₂, pulso, temperatura) con WebSockets (pendiente).</p>
+      <div class="btns">
+        <button class="btn" onclick="alert('Funcionalidad próximamente');">Próximamente</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
+
 
 @endsection
