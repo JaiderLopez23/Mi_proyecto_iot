@@ -2,64 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\station;
+use App\Models\sensor;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+use App\Models\department;
+
 
 class sensorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $sensors = sensor::with('department.country')->paginate(10);
+        return view('sensors.index', compact('sensors'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $departments = department::orderBy('name')->get();
+        return view('sensors.create', compact('departments'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $data = $request->validate([
+            'name'          => 'required',
+            'code'          => 'required|unique:sensors,code',
+            'abbrev'        => 'nullable',
+            'id_department' => 'required|exists:departments,id',
+            'status'        => 'nullable'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(station $station)
-    {
-        //
-    }
+        sensor::create([
+            'name'          => $data['name'],
+            'code'          => $data['code'],
+            'abbrev'        => $data['abbrev'] ?? null,
+            'id_department' => $data['id_department'],
+            'status'        => $request->boolean('status'),
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(station $station)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, station $station)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(station $station)
-    {
-        //
-    }
-}
+        return redirect()->route('sensors.index')->with('ok', 'Sensor creado');
+    }}
