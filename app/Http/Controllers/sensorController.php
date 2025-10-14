@@ -2,44 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\sensor;
-use App\Http\Controllers\Controller;
+use App\Models\Sensor;
+use App\Models\Station;
 use Illuminate\Http\Request;
 
-use App\Models\department;
-
-
-class sensorController extends Controller
+class SensorController extends Controller
 {
     public function index()
     {
-        $sensors = sensor::with('department.country')->paginate(10);
+        $sensors = Sensor::with('station')->get();
         return view('sensors.index', compact('sensors'));
     }
 
     public function create()
     {
-        $departments = department::orderBy('name')->get();
-        return view('sensors.create', compact('departments'));
+        $stations = Station::all();
+        return view('sensors.create', compact('stations'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name'          => 'required',
-            'code'          => 'required|unique:sensors,code',
-            'abbrev'        => 'nullable',
-            'id_department' => 'required|exists:departments,id',
-            'status'        => 'nullable'
+        $request->validate([
+            'name' => 'required',
+            'id_station' => 'required|exists:stations,id',
         ]);
 
-        sensor::create([
-            'name'          => $data['name'],
-            'code'          => $data['code'],
-            'abbrev'        => $data['abbrev'] ?? null,
-            'id_department' => $data['id_department'],
-            'status'        => $request->boolean('status'),
-        ]);
-
-        return redirect()->route('sensors.index')->with('ok', 'Sensor creado');
-    }}
+        Sensor::create($request->all());
+        return redirect()->route('sensors.index')->with('success', 'Sensor creado correctamente');
+    }
+}

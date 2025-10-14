@@ -6,32 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
-        Schema::create('sensor_datas', function (Blueprint $t) {
+        Schema::create('sensor_data', function (Blueprint $t) {
             $t->id();
-            $t->unsignedBigInteger('id_sensor');
-            $t->float('value');
-            $t->float('temperature');
-            $t->float('humidity');
+            $t->foreignId('id_sensor')->constrained('sensors')->onDelete('cascade');
+            $t->foreignId('id_station')->constrained('stations')->onDelete('cascade');
+            $t->float('temp_value')->nullable();
+            $t->float('humidity')->nullable();
             $t->boolean('status')->default(true);
-            $t->timestamp('deleted_at')->nullable();
+            
             $t->timestamps();
-
-            // Clave foránea opcional
-            $t->foreign('id_sensor')->references('id')->on('sensors')->onDelete('cascade');
-
+            $t->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
-        Schema::dropIfExists('sensor_datas');
+        Schema::dropIfExists('sensor_data');
     }
 };
+

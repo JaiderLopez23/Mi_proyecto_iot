@@ -6,24 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
-        Schema::create('cities', function (Blueprint $t) {
+        Schema::create('departments', function (Blueprint $t) {
             $t->id();
             $t->string('name');
             $t->string('code')->nullable();
             $t->string('abbrev', 10)->nullable();
             $t->boolean('status')->default(true);
-            $t->foreignId('id_department')->constrained('departments')->onDelete('cascade');
+
+            // Relación con countries (ya corregida)
+            $t->foreignId('id_country')
+                ->constrained('countries')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
             $t->timestamps();
             $t->softDeletes();
         });
     }
 
-
     public function down(): void
     {
-        Schema::dropIfExists('cities');
+        Schema::dropIfExists('departments');
     }
 };
